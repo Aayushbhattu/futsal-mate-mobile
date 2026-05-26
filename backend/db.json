@@ -1,0 +1,91 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "email": "testuser@futsal.com",
+      "password": "$2a$10$axk6gEEsCooCQ2NsiBe1EelPdIiofsdLfSz7cFZgTGYG0pyLWNzXi",
+      "full_name": "Test User",
+      "phone": "9841234567",
+      "created_at": "2026-05-25T07:09:46.102Z"
+    }
+  ],
+  "courts": [
+    {
+      "id": 1,
+      "name": "Downtown Futsal Arena",
+      "location": "City Center, Downtown",
+      "price_per_hour": 50,
+      "rating": 4.8,
+      "image_url": "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=400",
+      "description": "Premium futsal court in the heart of the city"
+    },
+    {
+      "id": 2,
+      "name": "Sports Hub Complex",
+      "location": "North District",
+      "price_per_hour": 40,
+      "rating": 4.5,
+      "image_url": "https://images.unsplash.com/photo-1575361204480-aadea25bd85e?w=400",
+      "description": "Modern facility with professional courts"
+    },
+    {
+      "id": 3,
+      "name": "Elite Futsal Club",
+      "location": "South Park",
+      "price_per_hour": 60,
+      "rating": 4.9,
+      "image_url": "https://images.unsplash.com/photo-1574482620811-1aa16ffe3c82?w=400",
+      "description": "Championship-standard futsal venue"
+    },
+    {
+      "id": 4,
+      "name": "Community Sports Center",
+      "location": "Suburb Area",
+      "price_per_hour": 30,
+      "rating": 4.2,
+      "image_url": "https://images.unsplash.com/photo-1461023058943-07fcbe16d735?w=400",
+      "description": "Budget-friendly community sports facility"
+    },
+    {
+      "id": 5,
+      "name": "Rainbow Stadium",
+      "location": "East End",
+      "price_per_hour": 45,
+      "rating": 4.6,
+      "image_url": "https://images.unsplash.com/photo-1540747913ee00fa4e050c14c1f600ca6f996f343?w=400",
+      "description": "Multi-purpose sports facility with futsal courts"
+    }
+  ],
+  "bookings": [],
+  "teams": [
+    {
+      "id": 1,
+      "name": "Dragon Warriors",
+      "description": "Pro-level futsal team",
+      "location": "Downtown",
+      "member_count": 5,
+      "created_by": 1
+    }
+  ],
+  "offers": [
+    {
+      "id": 1,
+      "court_id": 1,
+      "title": "Weekend Special",
+      "description": "20% off on bookings this weekend",
+      "discount_percentage": 20,
+      "valid_from": "2026-05-25",
+      "valid_to": "2025-12-31"
+    },
+    {
+      "id": 2,
+      "court_id": 3,
+      "title": "New Year Deal",
+      "description": "30% off for first-time bookings",
+      "discount_percentage": 30,
+      "valid_from": "2026-05-25",
+      "valid_to": "2025-12-31"
+    }
+  ],
+  "favorites": []
+}
