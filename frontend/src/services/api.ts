@@ -1,14 +1,14 @@
 
 
-// Replace with your backend URL
-// For local testing: Use your computer's IP address, not localhost
-// Example: http://192.168.1.100:5000/api http://192.168.1.72:5000/api http://localhost:8081/api
+// Laravel backend running on http://127.0.0.1:8000/api
+// For mobile device testing, replace localhost with your computer's IP address
+// Example: http://192.168.1.100:8000/api
 import axios from 'axios';
 import * as SecureStore from 'expo-secure-store';
 
-// ⚠️ REPLACE WITH YOUR COMPUTER'S IP ADDRESS
-// Example: http://192.168.1.100:5000/api http://192.168.1.72:5000/api http://localhost:8081/api
-const API_BASE_URL = 'http://localhost:8081/api';
+// ⚠️ For local testing on web: http://127.0.0.1:8000/api
+// ⚠️ For mobile device: Replace 127.0.0.1 with your computer's IP address
+const API_BASE_URL = 'http://127.0.0.1:8000/api';
 
 const api = axios.create({
   baseURL: API_BASE_URL,
