@@ -26,10 +26,10 @@ export default function LoginScreen({ navigation }: any) {
       Alert.alert('Error', 'Please fill in all fields');
       return;
     }
-
     setLoading(true);
     try {
       await login(email, password);
+      
     } catch (error: any) {
       Alert.alert('Login Failed', error.message);
     } finally {

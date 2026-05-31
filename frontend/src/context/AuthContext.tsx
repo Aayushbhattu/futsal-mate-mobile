@@ -2,8 +2,8 @@ import axios from 'axios';
 import * as SecureStore from 'expo-secure-store';
 import React, { createContext, useContext, useEffect, useState } from 'react';
 
-// ⚠️ REPLACE WITH YOUR COMPUTER'S IP ADDRESS
-const API_BASE_URL = 'http://localhost:8081/api';
+// ⚠️ REPLACE WITH YOUR COMPUTER'S IP ADDRESS WHEN BACKEND IS READY
+const API_BASE_URL = 'http://192.168.1.xxx:8081/api';
 
 interface User {
   id: number;
@@ -38,7 +38,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const savedToken = await SecureStore.getItemAsync('authToken');
       if (savedToken) {
         setToken(savedToken);
-        await fetchUser(savedToken);
+        
+        setUser({ id: 1, email: 'test@test.com', full_name: 'Test User' });
       }
     } catch (error) {
       console.error('Error loading token:', error);
@@ -60,39 +61,51 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const login = async (email: string, password: string) => {
-    try {
-      const response = await axios.post(`${API_BASE_URL}/auth/login`, {
-        email,
-        password,
-      });
+    //  TEMPORARY BYPASS — for testing untill backend is ready
+    const fakeToken = 'test-token-123';
+    const fakeUser = { id: 1, email, full_name: 'Test User' };
+    await SecureStore.setItemAsync('authToken', fakeToken);
+    setToken(fakeToken);
+    setUser(fakeUser);
 
-      const { token: authToken, user: userData } = response.data;
-
-      await SecureStore.setItemAsync('authToken', authToken);
-      setToken(authToken);
-      setUser(userData);
-    } catch (error: any) {
-      throw new Error(error.response?.data?.error || 'Login failed');
-    }
+    
+    // try {
+    //   const response = await axios.post(`${API_BASE_URL}/auth/login`, {
+    //     email,
+    //     password,
+    //   });
+    //   const { token: authToken, user: userData } = response.data;
+    //   await SecureStore.setItemAsync('authToken', authToken);
+    //   setToken(authToken);
+    //   setUser(userData);
+    // } catch (error: any) {
+    //   throw new Error(error.response?.data?.error || 'Login failed');
+    // }
   };
 
   const signup = async (email: string, password: string, full_name: string, phone?: string) => {
-    try {
-      const response = await axios.post(`${API_BASE_URL}/auth/signup`, {
-        email,
-        password,
-        full_name,
-        phone,
-      });
+    // ✅ TEMPORARY BYPASS — remove when backend is ready
+    const fakeToken = 'test-token-123';
+    const fakeUser = { id: 1, email, full_name };
+    await SecureStore.setItemAsync('authToken', fakeToken);
+    setToken(fakeToken);
+    setUser(fakeUser);
 
-      const { token: authToken, user: userData } = response.data;
-
-      await SecureStore.setItemAsync('authToken', authToken);
-      setToken(authToken);
-      setUser(userData);
-    } catch (error: any) {
-      throw new Error(error.response?.data?.error || 'Signup failed');
-    }
+    
+    // try {
+    //   const response = await axios.post(`${API_BASE_URL}/auth/signup`, {
+    //     email,
+    //     password,
+    //     full_name,
+    //     phone,
+    //   });
+    //   const { token: authToken, user: userData } = response.data;
+    //   await SecureStore.setItemAsync('authToken', authToken);
+    //   setToken(authToken);
+    //   setUser(userData);
+    // } catch (error: any) {
+    //   throw new Error(error.response?.data?.error || 'Signup failed');
+    // }
   };
 
   const logout = async () => {
