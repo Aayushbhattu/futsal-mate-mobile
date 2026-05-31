@@ -1,5 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import React from 'react';
 import Booking from '../components/Booking';
 import FindTeam from '../components/FindTeam';
@@ -11,6 +12,8 @@ import colors from '../constants/colors';
 const Tab = createBottomTabNavigator();
 
 export default function BottomTabNavigator() {
+  const insets = useSafeAreaInsets();
+
   return (
     <Tab.Navigator
       screenOptions={{
@@ -18,16 +21,10 @@ export default function BottomTabNavigator() {
         tabBarActiveTintColor: colors.primary,
         tabBarInactiveTintColor: colors.gray[400],
         tabBarStyle: {
-          backgroundColor: '#ffffff',
-          borderTopLeftRadius: 25,
-          borderTopRightRadius: 25,
-          height: 70,
-          paddingBottom: 20,
-          paddingTop: 2,
-          shadowColor: colors.primary,
-          shadowOffset: { width: 0, height: -4 },
-          shadowOpacity: 0.15,
-          shadowRadius: 20,
+          backgroundColor: '#fff',
+          minHeight: 65 + insets.bottom,
+          paddingBottom: insets.bottom + 8,
+          paddingTop: 5,
           elevation: 10,
         },
         tabBarLabelStyle: {
