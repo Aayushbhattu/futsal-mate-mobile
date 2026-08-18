@@ -1,14 +1,23 @@
-
-
-// Laravel backend running on http://127.0.0.1:8000/api
-// For mobile device testing, replace localhost with your computer's IP address
-// Example: http://192.168.1.100:8000/api
 import axios from 'axios';
-import * as SecureStore from 'expo-secure-store';
+import Constants from 'expo-constants';
+import { Platform } from 'react-native';
+import { storage } from './storage';
 
-// ⚠️ For local testing on web: http://127.0.0.1:8000/api
-// ⚠️ For mobile device: Replace 127.0.0.1 with your computer's IP address
-const API_BASE_URL = 'http://127.0.0.1:8000/api';
+const API_PORT = 8090;
+
+function resolveApiHost(): string {
+  try {
+    const hostUri = (Constants as any).expoConfig?.hostUri as string | undefined;
+    if (hostUri) {
+      return hostUri.split(':')[0];
+    }
+  } catch (error) {
+    // ignore and fall back
+  }
+  return Platform.OS === 'web' ? 'localhost' : 'localhost';
+}
+
+export const API_BASE_URL = `http://${resolveApiHost()}:${API_PORT}/api`;
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -18,12 +27,18 @@ const api = axios.create({
   },
 });
 
-// Add auth token to all requests
 api.interceptors.request.use(
   async (config) => {
-    const token = await SecureStore.getItemAsync('authToken');
+    const token = await storage.getItem('authToken');
     if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+      if (config.headers && typeof (config.headers as any).set === 'function') {
+        (config.headers as any).set('Authorization', `Bearer ${token}`);
+      } else {
+        config.headers = {
+          ...(config.headers ?? {}),
+          Authorization: `Bearer ${token}`,
+        } as any;
+      }
     }
     return config;
   },

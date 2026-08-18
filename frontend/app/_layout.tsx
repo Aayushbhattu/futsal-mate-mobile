@@ -1,13 +1,10 @@
-import BottomTabNavigator from '../src/navigation/BottomTabNavigator';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { NavigationContainer } from '@react-navigation/native';
+import { Stack } from 'expo-router';
+import { AuthProvider } from '../src/context/AuthContext';
 
-export default function App() {
+export default function RootLayout() {
   return (
-    <SafeAreaProvider>
-      <NavigationContainer>
-        <BottomTabNavigator />
-      </NavigationContainer>
-    </SafeAreaProvider>
+    <AuthProvider>
+      <Stack screenOptions={{ headerShown: false }} />
+    </AuthProvider>
   );
 }

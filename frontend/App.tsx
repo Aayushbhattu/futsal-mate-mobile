@@ -1,3 +1,3 @@
-import App from './app/App';
-
-export default App;
+export default function App() {
+  return null;
+}

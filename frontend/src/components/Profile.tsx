@@ -6,13 +6,18 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
+  useWindowDimensions,
   View,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import colors from '../constants/colors';
 import { useAuth } from '../context/AuthContext';
 
 export default function Profile() {
   const { user, logout } = useAuth();
+  const { width: SCREEN_W, height: SCREEN_H } = useWindowDimensions();
+  const insets = useSafeAreaInsets();
+  const IS_SMALL = SCREEN_H < 680;
 
   const stats = [
     { label: 'Games Played', value: '0', icon: 'trophy' },
@@ -40,43 +45,108 @@ export default function Profile() {
     ]);
   };
 
+  const pad = Math.max(SCREEN_W * 0.06, 16);
+
   return (
     <ScrollView style={styles.container}>
-      <View style={styles.header}>
-        <View style={styles.headerTop}>
-          <Text style={styles.headerTitle}>Profile</Text>
+      <View
+        style={[
+          styles.header,
+          {
+            paddingTop: Math.max(insets.top, 20) + 16,
+            paddingBottom: IS_SMALL ? 80 : 100,
+          },
+        ]}
+      >
+        <View style={[styles.headerTop, { paddingHorizontal: pad, marginBottom: IS_SMALL ? 16 : 24 }]}>
+          <Text style={[styles.headerTitle, { fontSize: IS_SMALL ? 20 : 24 }]}>Profile</Text>
           <TouchableOpacity style={styles.settingsButton}>
-            <Ionicons name="settings-outline" size={24} color="white" />
+            <Ionicons name="settings-outline" size={22} color="white" />
           </TouchableOpacity>
         </View>
 
         <View style={styles.profileInfo}>
-          <View style={styles.avatar}>
-            <Ionicons name="person" size={48} color={colors.primary} />
+          <View
+            style={[
+              styles.avatar,
+              {
+                width: IS_SMALL ? 80 : 96,
+                height: IS_SMALL ? 80 : 96,
+                borderRadius: IS_SMALL ? 40 : 48,
+                marginBottom: IS_SMALL ? 12 : 16,
+              },
+            ]}
+          >
+            <Ionicons name="person" size={IS_SMALL ? 40 : 48} color={colors.primary} />
           </View>
-          <Text style={styles.userName}>{user?.full_name || 'User Name'}</Text>
-          <Text style={styles.userEmail}>{user?.email || 'email@example.com'}</Text>
+          <Text
+            style={[
+              styles.userName,
+              { fontSize: IS_SMALL ? 18 : 20, marginBottom: IS_SMALL ? 2 : 4 },
+            ]}
+          >
+            {user?.full_name || 'User Name'}
+          </Text>
+          <Text
+            style={[
+              styles.userEmail,
+              { fontSize: IS_SMALL ? 12 : 14, marginBottom: IS_SMALL ? 12 : 16 },
+            ]}
+          >
+            {user?.email || 'email@example.com'}
+          </Text>
 
           <View style={styles.memberBadge}>
-            <Ionicons name="star" size={16} color="#fbbf24" />
-            <Text style={styles.memberText}>Gold Member</Text>
+            <Ionicons name="star" size={14} color="#fbbf24" />
+            <Text style={[styles.memberText, { fontSize: IS_SMALL ? 12 : 14 }]}>
+              Gold Member
+            </Text>
           </View>
         </View>
       </View>
 
-      <View style={styles.statsCard}>
+      <View
+        style={[
+          styles.statsCard,
+          {
+            marginHorizontal: pad,
+            marginTop: -60,
+            borderRadius: 16,
+            padding: IS_SMALL ? 12 : 16,
+            marginBottom: IS_SMALL ? 16 : 24,
+          },
+        ]}
+      >
         <View style={styles.statsGrid}>
           {stats.map((stat, index) => (
             <View key={index} style={styles.statItem}>
-              <Ionicons name={stat.icon as any} size={24} color={colors.primary} />
-              <Text style={styles.statValue}>{stat.value}</Text>
-              <Text style={styles.statLabel}>{stat.label}</Text>
+              <Ionicons name={stat.icon as any} size={IS_SMALL ? 20 : 24} color={colors.primary} />
+              <Text
+                style={[
+                  styles.statValue,
+                  { fontSize: IS_SMALL ? 20 : 24, marginVertical: IS_SMALL ? 6 : 8 },
+                ]}
+              >
+                {stat.value}
+              </Text>
+              <Text style={[styles.statLabel, { fontSize: IS_SMALL ? 10 : 12 }]}>
+                {stat.label}
+              </Text>
             </View>
           ))}
         </View>
       </View>
 
-      <View style={styles.menuContainer}>
+      <View
+        style={[
+          styles.menuContainer,
+          {
+            marginHorizontal: pad,
+            borderRadius: 16,
+            marginBottom: IS_SMALL ? 16 : 24,
+          },
+        ]}
+      >
         {menuItems.map((item, index) => {
           const isLast = index === menuItems.length - 1;
           return (
@@ -85,24 +155,43 @@ export default function Profile() {
               style={[styles.menuItem, !isLast && styles.menuItemBorder]}
             >
               <View style={styles.menuItemLeft}>
-                <Ionicons name={item.icon as any} size={20} color={item.color} />
-                <Text style={styles.menuItemText}>{item.label}</Text>
+                <Ionicons name={item.icon as any} size={18} color={item.color} />
+                <Text
+                  style={[
+                    styles.menuItemText,
+                    { fontSize: IS_SMALL ? 14 : 16, marginLeft: 12 },
+                  ]}
+                >
+                  {item.label}
+                </Text>
               </View>
-              <Ionicons name="chevron-forward" size={20} color={colors.gray[400]} />
+              <Ionicons name="chevron-forward" size={18} color={colors.gray[400]} />
             </TouchableOpacity>
           );
         })}
 
-        <TouchableOpacity style={styles.menuItem} onPress={handleLogout}>
+        <TouchableOpacity
+          style={[styles.menuItem, styles.menuItemBorder]}
+          onPress={handleLogout}
+        >
           <View style={styles.menuItemLeft}>
-            <Ionicons name="log-out-outline" size={20} color="#ef4444" />
-            <Text style={[styles.menuItemText, { color: '#ef4444' }]}>Logout</Text>
+            <Ionicons name="log-out-outline" size={18} color="#ef4444" />
+            <Text
+              style={[
+                styles.menuItemText,
+                { color: '#ef4444', fontSize: IS_SMALL ? 14 : 16, marginLeft: 12 },
+              ]}
+            >
+              Logout
+            </Text>
           </View>
-          <Ionicons name="chevron-forward" size={20} color={colors.gray[400]} />
+          <Ionicons name="chevron-forward" size={18} color={colors.gray[400]} />
         </TouchableOpacity>
       </View>
 
-      <Text style={styles.appVersion}>Futsal Mate v1.0.0</Text>
+      <Text style={[styles.appVersion, { marginBottom: IS_SMALL ? 24 : 32 }]}>
+        Futsal Mate v1.0.0
+      </Text>
     </ScrollView>
   );
 }
@@ -114,8 +203,6 @@ const styles = StyleSheet.create({
   },
   header: {
     backgroundColor: colors.primary,
-    paddingTop: 60,
-    paddingBottom: 100,
     borderBottomLeftRadius: 30,
     borderBottomRightRadius: 30,
   },
@@ -123,12 +210,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: 24,
-    marginBottom: 24,
   },
   headerTitle: {
     color: 'white',
-    fontSize: 24,
     fontWeight: 'bold',
   },
   settingsButton: {
@@ -140,13 +224,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   avatar: {
-    width: 96,
-    height: 96,
     backgroundColor: 'white',
-    borderRadius: 48,
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 16,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.2,
@@ -155,14 +235,10 @@ const styles = StyleSheet.create({
   },
   userName: {
     color: 'white',
-    fontSize: 20,
     fontWeight: 'bold',
-    marginBottom: 4,
   },
   userEmail: {
     color: 'rgba(255, 255, 255, 0.9)',
-    fontSize: 14,
-    marginBottom: 16,
   },
   memberBadge: {
     flexDirection: 'row',
@@ -174,22 +250,16 @@ const styles = StyleSheet.create({
   },
   memberText: {
     color: 'white',
-    fontSize: 14,
     marginLeft: 8,
     fontWeight: '600',
   },
   statsCard: {
     backgroundColor: 'white',
-    marginHorizontal: 24,
-    marginTop: -60,
-    borderRadius: 16,
-    padding: 16,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.1,
     shadowRadius: 12,
     elevation: 4,
-    marginBottom: 24,
   },
   statsGrid: {
     flexDirection: 'row',
@@ -201,27 +271,21 @@ const styles = StyleSheet.create({
     padding: 12,
   },
   statValue: {
-    fontSize: 24,
     fontWeight: 'bold',
     color: colors.gray[900],
-    marginVertical: 8,
   },
   statLabel: {
-    fontSize: 12,
     color: colors.gray[500],
     textAlign: 'center',
   },
   menuContainer: {
     backgroundColor: 'white',
-    marginHorizontal: 24,
-    borderRadius: 16,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.05,
     shadowRadius: 8,
     elevation: 2,
     overflow: 'hidden',
-    marginBottom: 24,
   },
   menuItem: {
     flexDirection: 'row',
@@ -238,14 +302,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   menuItemText: {
-    fontSize: 16,
     color: colors.gray[700],
-    marginLeft: 12,
   },
   appVersion: {
     textAlign: 'center',
     fontSize: 12,
     color: colors.gray[400],
-    marginBottom: 32,
   },
 });

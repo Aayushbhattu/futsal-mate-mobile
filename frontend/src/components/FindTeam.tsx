@@ -8,8 +8,10 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
+  useWindowDimensions,
   View,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import colors from '../constants/colors';
 import { teamsAPI } from '../services/api';
 
@@ -25,6 +27,9 @@ interface Team {
 }
 
 export default function FindTeam() {
+  const { width: SCREEN_W, height: SCREEN_H } = useWindowDimensions();
+  const insets = useSafeAreaInsets();
+  const IS_SMALL = SCREEN_H < 680;
   const [teams, setTeams] = useState<Team[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeFilter, setActiveFilter] = useState('All');
@@ -65,29 +70,53 @@ export default function FindTeam() {
   };
 
   const filters = ['All', 'Beginner', 'Intermediate', 'Advanced', 'Near Me'];
+  const pad = Math.max(SCREEN_W * 0.06, 16);
 
   return (
     <ScrollView style={styles.container}>
-      <View style={styles.header}>
+      <View
+        style={[
+          styles.header,
+          {
+            paddingTop: Math.max(insets.top, 20) + 16,
+            paddingHorizontal: pad,
+            paddingBottom: IS_SMALL ? 28 : 32,
+          },
+        ]}
+      >
         <View style={styles.headerContent}>
-          <Ionicons name="people" size={32} color="white" />
-          <Text style={styles.headerTitle}>Find Team</Text>
+          <Ionicons name="people" size={IS_SMALL ? 26 : 32} color="white" />
+          <Text style={[styles.headerTitle, { fontSize: IS_SMALL ? 20 : 24, marginLeft: 12 }]}>
+            Find Team
+          </Text>
         </View>
-        <Text style={styles.headerSubtitle}>Join a team or create your own</Text>
+        <Text style={[styles.headerSubtitle, { fontSize: IS_SMALL ? 12 : 14 }]}>
+          Join a team or create your own
+        </Text>
       </View>
 
-      <View style={styles.createTeamContainer}>
-        <TouchableOpacity style={styles.createTeamButton}>
-          <Ionicons name="person-add" size={20} color="white" />
-          <Text style={styles.createTeamText}>Create Your Team</Text>
+      <View style={{ padding: pad }}>
+        <TouchableOpacity
+          style={[
+            styles.createTeamButton,
+            {
+              padding: IS_SMALL ? 12 : 16,
+              borderRadius: 12,
+            },
+          ]}
+        >
+          <Ionicons name="person-add" size={IS_SMALL ? 18 : 20} color="white" />
+          <Text style={[styles.createTeamText, { fontSize: IS_SMALL ? 14 : 16, marginLeft: 8 }]}>
+            Create Your Team
+          </Text>
         </TouchableOpacity>
       </View>
 
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
-        style={styles.filterContainer}
-        contentContainerStyle={styles.filterContent}
+        style={{ paddingHorizontal: pad, marginBottom: IS_SMALL ? 12 : 16 }}
+        contentContainerStyle={{ gap: 8 }}
       >
         {filters.map((filter) => (
           <TouchableOpacity
@@ -95,12 +124,18 @@ export default function FindTeam() {
             onPress={() => setActiveFilter(filter)}
             style={[
               styles.filterButton,
+              {
+                paddingHorizontal: IS_SMALL ? 12 : 16,
+                paddingVertical: IS_SMALL ? 6 : 8,
+                borderRadius: 20,
+              },
               activeFilter === filter && styles.filterButtonActive,
             ]}
           >
             <Text
               style={[
                 styles.filterText,
+                { fontSize: IS_SMALL ? 12 : 14 },
                 activeFilter === filter && styles.filterTextActive,
               ]}
             >
@@ -110,8 +145,15 @@ export default function FindTeam() {
         ))}
       </ScrollView>
 
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Available Teams</Text>
+      <View style={[styles.section, { padding: pad }]}>
+        <Text
+          style={[
+            styles.sectionTitle,
+            { fontSize: IS_SMALL ? 14 : 16, marginBottom: IS_SMALL ? 12 : 16 },
+          ]}
+        >
+          Available Teams
+        </Text>
 
         {loading ? (
           <ActivityIndicator size="large" color={colors.primary} style={styles.loader} />
@@ -122,11 +164,18 @@ export default function FindTeam() {
 
             return (
               <View key={team.id} style={styles.teamCard}>
-                <View style={styles.teamImageContainer}>
+                <View style={[styles.teamImageContainer, { height: IS_SMALL ? 100 : 128 }]}>
                   <Image source={{ uri: team.image_url }} style={styles.teamImage} />
                   <View style={styles.imageOverlay} />
-                  <View style={styles.teamImageInfo}>
-                    <Text style={styles.teamName}>{team.name}</Text>
+                  <View style={[styles.teamImageInfo, { bottom: 10, left: 10, right: 10 }]}>
+                    <Text
+                      style={[
+                        styles.teamName,
+                        { fontSize: IS_SMALL ? 16 : 18 },
+                      ]}
+                    >
+                      {team.name}
+                    </Text>
                     <View style={[styles.levelBadge, { backgroundColor: levelColor.bg }]}>
                       <Text style={[styles.levelText, { color: levelColor.text }]}>
                         {team.level}
@@ -135,33 +184,42 @@ export default function FindTeam() {
                   </View>
                 </View>
 
-                <View style={styles.teamInfo}>
+                <View style={[styles.teamInfo, { padding: IS_SMALL ? 12 : 16 }]}>
                   <View style={styles.teamStats}>
                     <View style={styles.teamStat}>
-                      <Ionicons name="people-outline" size={16} color="#a855f7" />
-                      <Text style={styles.teamStatText}>
+                      <Ionicons name="people-outline" size={14} color="#a855f7" />
+                      <Text style={[styles.teamStatText, { fontSize: IS_SMALL ? 12 : 14 }]}>
                         {team.current_members}/{team.max_members} Players
                       </Text>
                     </View>
                     <View style={styles.teamStat}>
-                      <Ionicons name="calendar-outline" size={16} color="#a855f7" />
-                      <Text style={styles.teamStatText}>{team.next_game}</Text>
+                      <Ionicons name="calendar-outline" size={14} color="#a855f7" />
+                      <Text style={[styles.teamStatText, { fontSize: IS_SMALL ? 12 : 14 }]}>
+                        {team.next_game}
+                      </Text>
                     </View>
                   </View>
 
                   <View style={styles.teamStat}>
-                    <Ionicons name="location-outline" size={16} color="#a855f7" />
-                    <Text style={styles.teamStatText}>{team.location}</Text>
+                    <Ionicons name="location-outline" size={14} color="#a855f7" />
+                    <Text style={[styles.teamStatText, { fontSize: IS_SMALL ? 12 : 14 }]}>
+                      {team.location}
+                    </Text>
                   </View>
 
                   <TouchableOpacity
                     disabled={isFull}
                     onPress={() => joinTeam(team.id)}
-                    style={[styles.joinButton, isFull && styles.joinButtonDisabled]}
+                    style={[
+                      styles.joinButton,
+                      { padding: IS_SMALL ? 10 : 12, borderRadius: 8, marginTop: IS_SMALL ? 8 : 12 },
+                      isFull && styles.joinButtonDisabled,
+                    ]}
                   >
                     <Text
                       style={[
                         styles.joinButtonText,
+                        { fontSize: IS_SMALL ? 12 : 14 },
                         isFull && styles.joinButtonTextDisabled,
                       ]}
                     >
@@ -185,8 +243,6 @@ const styles = StyleSheet.create({
   },
   header: {
     backgroundColor: '#a855f7',
-    padding: 24,
-    paddingTop: 60,
     borderBottomLeftRadius: 30,
     borderBottomRightRadius: 30,
   },
@@ -197,24 +253,16 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     color: 'white',
-    fontSize: 24,
     fontWeight: 'bold',
-    marginLeft: 12,
   },
   headerSubtitle: {
     color: 'rgba(255, 255, 255, 0.9)',
-    fontSize: 14,
-  },
-  createTeamContainer: {
-    padding: 24,
   },
   createTeamButton: {
     backgroundColor: '#a855f7',
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 16,
-    borderRadius: 12,
     shadowColor: '#a855f7',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
@@ -223,42 +271,25 @@ const styles = StyleSheet.create({
   },
   createTeamText: {
     color: 'white',
-    fontSize: 16,
     fontWeight: 'bold',
-    marginLeft: 8,
-  },
-  filterContainer: {
-    paddingHorizontal: 24,
-    marginBottom: 16,
-  },
-  filterContent: {
-    gap: 8,
   },
   filterButton: {
     backgroundColor: 'white',
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 20,
   },
   filterButtonActive: {
     backgroundColor: '#a855f7',
   },
   filterText: {
-    fontSize: 14,
     color: colors.gray[600],
   },
   filterTextActive: {
     color: 'white',
     fontWeight: '600',
   },
-  section: {
-    padding: 24,
-  },
+  section: {},
   sectionTitle: {
-    fontSize: 16,
     fontWeight: 'bold',
     color: colors.gray[900],
-    marginBottom: 16,
   },
   loader: {
     marginVertical: 32,
@@ -276,7 +307,6 @@ const styles = StyleSheet.create({
   },
   teamImageContainer: {
     position: 'relative',
-    height: 128,
   },
   teamImage: {
     width: '100%',
@@ -284,21 +314,17 @@ const styles = StyleSheet.create({
     backgroundColor: colors.gray[200],
   },
   imageOverlay: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
     backgroundColor: 'rgba(0, 0, 0, 0.4)',
   },
   teamImageInfo: {
     position: 'absolute',
-    bottom: 12,
-    left: 12,
-    right: 12,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
   },
   teamName: {
     color: 'white',
-    fontSize: 18,
     fontWeight: 'bold',
   },
   levelBadge: {
@@ -310,13 +336,11 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: '600',
   },
-  teamInfo: {
-    padding: 16,
-  },
+  teamInfo: {},
   teamStats: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: 12,
+    marginBottom: 8,
   },
   teamStat: {
     flexDirection: 'row',
@@ -324,14 +348,11 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   teamStatText: {
-    fontSize: 14,
     color: colors.gray[600],
     marginLeft: 8,
   },
   joinButton: {
     backgroundColor: '#a855f7',
-    padding: 12,
-    borderRadius: 8,
     alignItems: 'center',
   },
   joinButtonDisabled: {
@@ -339,7 +360,6 @@ const styles = StyleSheet.create({
   },
   joinButtonText: {
     color: 'white',
-    fontSize: 14,
     fontWeight: '600',
   },
   joinButtonTextDisabled: {

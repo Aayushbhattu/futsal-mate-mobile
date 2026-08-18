@@ -8,8 +8,10 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
+  useWindowDimensions,
   View,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import colors from '../constants/colors';
 import { offersAPI } from '../services/api';
 
@@ -24,6 +26,9 @@ interface Offer {
 }
 
 export default function SpecialOffer() {
+  const { width: SCREEN_W, height: SCREEN_H } = useWindowDimensions();
+  const insets = useSafeAreaInsets();
+  const IS_SMALL = SCREEN_H < 680;
   const [offers, setOffers] = useState<Offer[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -52,36 +57,92 @@ export default function SpecialOffer() {
     return badges[type as keyof typeof badges] || badges.new;
   };
 
+  const pad = Math.max(SCREEN_W * 0.06, 16);
+
   return (
     <ScrollView style={styles.container}>
-      <View style={styles.header}>
+      <View
+        style={[
+          styles.header,
+          {
+            paddingTop: Math.max(insets.top, 20) + 16,
+            paddingHorizontal: pad,
+            paddingBottom: IS_SMALL ? 28 : 32,
+          },
+        ]}
+      >
         <View style={styles.headerContent}>
-          <Ionicons name="pricetag" size={32} color="white" />
-          <Text style={styles.headerTitle}>Special Offers</Text>
+          <Ionicons name="pricetag" size={IS_SMALL ? 26 : 32} color="white" />
+          <Text style={[styles.headerTitle, { fontSize: IS_SMALL ? 20 : 24, marginLeft: 12 }]}>
+            Special Offers
+          </Text>
         </View>
-        <Text style={styles.headerSubtitle}>Don't miss out on amazing deals!</Text>
+        <Text style={[styles.headerSubtitle, { fontSize: IS_SMALL ? 12 : 14 }]}>
+          Don't miss out on amazing deals!
+        </Text>
       </View>
 
-      <View style={styles.featuredBanner}>
+      <View
+        style={[
+          styles.featuredBanner,
+          {
+            margin: pad,
+            borderRadius: 16,
+            padding: IS_SMALL ? 18 : 24,
+          },
+        ]}
+      >
         <View style={styles.bannerDecor1} />
         <View style={styles.bannerDecor2} />
         <View style={styles.bannerContent}>
           <View style={styles.limitedBadge}>
-            <Ionicons name="star" size={16} color="#fbbf24" />
-            <Text style={styles.limitedText}>Limited Time Offer</Text>
+            <Ionicons name="star" size={14} color="#fbbf24" />
+            <Text style={[styles.limitedText, { fontSize: IS_SMALL ? 10 : 12 }]}>
+              Limited Time Offer
+            </Text>
           </View>
-          <Text style={styles.bannerTitle}>First Booking Free!</Text>
-          <Text style={styles.bannerDescription}>
+          <Text
+            style={[
+              styles.bannerTitle,
+              { fontSize: IS_SMALL ? 20 : 24, marginBottom: IS_SMALL ? 6 : 8 },
+            ]}
+          >
+            First Booking Free!
+          </Text>
+          <Text
+            style={[
+              styles.bannerDescription,
+              { fontSize: IS_SMALL ? 12 : 14, marginBottom: IS_SMALL ? 12 : 16 },
+            ]}
+          >
             Sign up now and get your first booking absolutely free
           </Text>
-          <TouchableOpacity style={styles.claimButton}>
-            <Text style={styles.claimButtonText}>Claim Now</Text>
+          <TouchableOpacity
+            style={[
+              styles.claimButton,
+              {
+                paddingHorizontal: IS_SMALL ? 18 : 24,
+                paddingVertical: IS_SMALL ? 10 : 12,
+                borderRadius: 8,
+              },
+            ]}
+          >
+            <Text style={[styles.claimButtonText, { fontSize: IS_SMALL ? 12 : 14 }]}>
+              Claim Now
+            </Text>
           </TouchableOpacity>
         </View>
       </View>
 
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>All Offers</Text>
+      <View style={[styles.section, { padding: pad }]}>
+        <Text
+          style={[
+            styles.sectionTitle,
+            { fontSize: IS_SMALL ? 16 : 18, marginBottom: IS_SMALL ? 12 : 16 },
+          ]}
+        >
+          All Offers
+        </Text>
 
         {loading ? (
           <ActivityIndicator size="large" color={colors.primary} style={styles.loader} />
@@ -91,27 +152,53 @@ export default function SpecialOffer() {
             return (
               <View key={offer.id} style={styles.offerCard}>
                 <View style={styles.offerImageContainer}>
-                  <Image source={{ uri: offer.image_url }} style={styles.offerImage} />
+                  <Image
+                    source={{ uri: offer.image_url }}
+                    style={[styles.offerImage, { height: IS_SMALL ? 100 : 120 }]}
+                  />
                   <View style={[styles.typeBadge, { backgroundColor: badge.color }]}>
                     <Text style={styles.typeBadgeText}>
                       {badge.emoji} {badge.text}
                     </Text>
                   </View>
                 </View>
-                <View style={styles.offerInfo}>
+                <View style={[styles.offerInfo, { padding: IS_SMALL ? 12 : 16 }]}>
                   <View style={styles.offerHeader}>
-                    <Text style={styles.offerTitle}>{offer.title}</Text>
-                    <View style={styles.discountBadge}>
+                    <Text
+                      style={[
+                        styles.offerTitle,
+                        { fontSize: IS_SMALL ? 14 : 16 },
+                      ]}
+                    >
+                      {offer.title}
+                    </Text>
+                    <View style={[styles.discountBadge, { paddingHorizontal: 8, paddingVertical: 4, borderRadius: 4, marginLeft: 8 }]}>
                       <Text style={styles.discountText}>{offer.discount}</Text>
                     </View>
                   </View>
-                  <Text style={styles.offerDescription}>{offer.description}</Text>
-                  <View style={styles.validityContainer}>
+                  <Text
+                    style={[
+                      styles.offerDescription,
+                      { fontSize: IS_SMALL ? 12 : 14, marginBottom: IS_SMALL ? 6 : 8 },
+                    ]}
+                  >
+                    {offer.description}
+                  </Text>
+                  <View style={[styles.validityContainer, { marginBottom: IS_SMALL ? 8 : 12 }]}>
                     <Ionicons name="time-outline" size={12} color={colors.gray[500]} />
-                    <Text style={styles.validityText}>{offer.valid_until}</Text>
+                    <Text style={[styles.validityText, { fontSize: IS_SMALL ? 10 : 12 }]}>
+                      {offer.valid_until}
+                    </Text>
                   </View>
-                  <TouchableOpacity style={styles.useOfferButton}>
-                    <Text style={styles.useOfferButtonText}>Use Offer</Text>
+                  <TouchableOpacity
+                    style={[
+                      styles.useOfferButton,
+                      { padding: IS_SMALL ? 10 : 12, borderRadius: 8 },
+                    ]}
+                  >
+                    <Text style={[styles.useOfferButtonText, { fontSize: IS_SMALL ? 12 : 14 }]}>
+                      Use Offer
+                    </Text>
                   </TouchableOpacity>
                 </View>
               </View>
@@ -130,8 +217,6 @@ const styles = StyleSheet.create({
   },
   header: {
     backgroundColor: '#f97316',
-    padding: 24,
-    paddingTop: 60,
     borderBottomLeftRadius: 30,
     borderBottomRightRadius: 30,
   },
@@ -142,19 +227,13 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     color: 'white',
-    fontSize: 24,
     fontWeight: 'bold',
-    marginLeft: 12,
   },
   headerSubtitle: {
     color: 'rgba(255, 255, 255, 0.9)',
-    fontSize: 14,
   },
   featuredBanner: {
     backgroundColor: '#a855f7',
-    margin: 24,
-    borderRadius: 16,
-    padding: 24,
     position: 'relative',
     overflow: 'hidden',
   },
@@ -186,40 +265,27 @@ const styles = StyleSheet.create({
   },
   limitedText: {
     color: 'white',
-    fontSize: 12,
     marginLeft: 8,
   },
   bannerTitle: {
     color: 'white',
-    fontSize: 24,
     fontWeight: 'bold',
-    marginBottom: 8,
   },
   bannerDescription: {
     color: 'rgba(255, 255, 255, 0.9)',
-    fontSize: 14,
-    marginBottom: 16,
   },
   claimButton: {
     backgroundColor: 'white',
-    paddingHorizontal: 24,
-    paddingVertical: 12,
-    borderRadius: 8,
     alignSelf: 'flex-start',
   },
   claimButtonText: {
     color: '#a855f7',
-    fontSize: 14,
     fontWeight: 'bold',
   },
-  section: {
-    padding: 24,
-  },
+  section: {},
   sectionTitle: {
-    fontSize: 18,
     fontWeight: 'bold',
     color: colors.gray[900],
-    marginBottom: 16,
   },
   loader: {
     marginVertical: 32,
@@ -240,25 +306,19 @@ const styles = StyleSheet.create({
   },
   offerImage: {
     width: '100%',
-    height: 120,
     backgroundColor: colors.gray[200],
   },
   typeBadge: {
     position: 'absolute',
     top: 8,
     left: 8,
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 4,
   },
   typeBadgeText: {
     color: 'white',
     fontSize: 10,
     fontWeight: 'bold',
   },
-  offerInfo: {
-    padding: 16,
-  },
+  offerInfo: {},
   offerHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -266,17 +326,12 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   offerTitle: {
-    fontSize: 16,
     fontWeight: 'bold',
     color: colors.gray[900],
     flex: 1,
   },
   discountBadge: {
     backgroundColor: '#d1fae5',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 4,
-    marginLeft: 8,
   },
   discountText: {
     color: '#065f46',
@@ -284,29 +339,22 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   offerDescription: {
-    fontSize: 14,
     color: colors.gray[600],
-    marginBottom: 8,
   },
   validityContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 12,
   },
   validityText: {
-    fontSize: 12,
     color: colors.gray[500],
     marginLeft: 4,
   },
   useOfferButton: {
     backgroundColor: colors.primary,
-    padding: 12,
-    borderRadius: 8,
     alignItems: 'center',
   },
   useOfferButtonText: {
     color: 'white',
-    fontSize: 14,
     fontWeight: '600',
   },
 });
